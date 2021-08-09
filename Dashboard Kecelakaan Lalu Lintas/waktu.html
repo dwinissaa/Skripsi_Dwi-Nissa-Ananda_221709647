@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="./vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="./vendors/base/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <link rel="stylesheet" href="./vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="./css/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="./images/favicon.png" />
+
+    <style>
+        .graph {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="navbar-brand-wrapper d-flex justify-content-center">
+                <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+                    <a class="navbar-brand brand-logo" href="index.html"><img src="./images/profile.png" alt="logo" /><span class="font-weight-bold mb-2" style="padding-left: 15px;">Dashboard</span></a>
+                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="./images/profile.png" alt="logo" /></a>
+                </div>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                        <span class="mdi mdi-sort-variant"></span>
+                </button>
+                <div class="lead">
+                    Kecelakaan Lalu Lintas Prov. Jawa Timur 2020 dari Ekstraksi Teks Berita Online
+                </div>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <i class="mdi mdi-account-circle text-primary" style="font-size:35px;"></i>
+                            <span class="nav-profile-name">Dwi Nissa Ananda</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="mdi mdi-settings text-primary"></i> Settings
+                            </a>
+                            <a class="dropdown-item">
+                                <i class="mdi mdi-logout text-primary"></i> Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_sidebar.html -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="mdi mdi-map-marker menu-icon"></i>
+                            <span class="menu-title">Peta Titik</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            <i class="mdi mdi-clock-outline menu-icon"></i>
+                            <span class="menu-title">Waktu</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="kelompokumur.html">
+                            <i class="mdi mdi-car-multiple menu-icon"></i>
+                            <span class="menu-title">Umur dan Jenis Kendaraan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="korbanlukadantewas.html">
+                            <i class="mdi mdi-hospital menu-icon"></i>
+                            <span class="menu-title">Korban Luka dan Tewas</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-6 grid-margin stretch-card">
+                            <div class="card">
+                                <!--<div class="card-body dashboard-tabs p-0">-->
+                                <h3 class="title-dash font-weight-bold mb-2">Jumlah Berita Kecelakaan Menurut&nbsp;<span id="ChangeThis">Bulan</span></h3>
+                                <div align="center" style="margin-top:20px">
+                                    <input type="radio" name="month-day" value="month" id="month" onclick="Clicked()" checked><label for="month">&nbsp;&nbsp;Bulan&nbsp;&nbsp;</label>
+                                    <input type="radio" name="month-day" value="day" id="day" onclick="Clicked()"><label for="day">&nbsp;&nbsp;Hari&nbsp;&nbsp;</label>
+                                </div>
+                                <canvas id="linebar-chartcanvas"></canvas>
+                                <!--
+                                    <div class="canvas-container ">
+                                    </div>
+                                    -->
+                                <!-- Plugin js for this page-->
+                                <script src="./vendors/chart.js/Chart.min.js "></script>
+                                <script>
+                                    const label_bulan = [];
+                                    const value_bulan = [];
+                                    const label_hari = [];
+                                    const value_hari = [];
+                                    var data_value = [];
+                                    var temp;
+
+                                    ChartIt_Bulan();
+
+                                    var tipe = 'line';
+                                    var color = ['#ff6699', '#0099ff'];
+
+                                    var data = {
+                                        labels: label_bulan,
+                                        datasets: [{
+                                            axis: 'y',
+                                            label: "Jumlah Berita",
+                                            display: false,
+                                            position: 'bottom',
+                                            data: value_bulan,
+                                            backgroundColor: color[0],
+                                            borderColor: "lightpink",
+                                            fill: false,
+                                            lineTension: 0,
+                                            pointRadius: 5,
+                                        }]
+                                    };
+
+                                    var data2 = {
+                                        labels: label_hari,
+                                        datasets: [{
+                                            axis: 'y',
+                                            label: "Jumlah Berita",
+                                            display: false,
+                                            position: 'bottom',
+                                            data: value_hari,
+                                            backgroundColor: color[1],
+                                            borderColor: "lightblue",
+                                            fill: false,
+                                            lineTension: 0,
+                                            pointRadius: 5,
+                                        }]
+                                    };
+
+                                    var ctx = document.getElementById("linebar-chartcanvas");
+
+                                    var config = {
+                                        type: tipe,
+                                        data: data,
+                                        options: {
+                                            responsive: true,
+                                            scales: {
+                                                yAxes: [{
+                                                    ticks: {
+                                                        beginAtZero: true
+                                                    }
+                                                }]
+                                            }
+                                        },
+                                    };
+                                    var chart = new Chart(ctx, config)
+
+                                    async function getData_Bulan() {
+                                        if (label_bulan.length == 0 && value_bulan.length == 0) {
+                                            const response = await fetch('https://raw.githubusercontent.com/dwinissaa/skripsi/main/DATA/BULAN.csv')
+                                            const data = await response.text()
+                                            const table = data.split('\n').slice(1);
+                                            label_bulan.push("");
+                                            value_bulan.push(null);
+                                            for (row = 0; row < table.length - 1; row++) {
+                                                const column = table[row].split(',')
+                                                label_bulan.push(column[0]);
+                                                value_bulan.push(parseInt(column[1]))
+                                            }
+                                            label_bulan.push("");
+                                            value_bulan.push(null);
+                                        }
+
+                                        temp = jQuery.extend(true, [], config);
+                                        config.type = 'line';
+                                        chart.config.data = data;
+                                        //data.datasets.backgroundColor = '#ff6699';
+                                        chart.update();
+                                    }
+
+                                    async function getData_Hari() {
+                                        if (label_hari.length == 0 && value_hari.length == 0) {
+                                            const response = await fetch('https://raw.githubusercontent.com/dwinissaa/skripsi/main/DATA/HARI.csv')
+                                            const data = await response.text()
+                                            const table = data.split('\n').slice(1);
+                                            label_hari.push("");
+                                            value_hari.push(null);
+                                            for (row = 0; row < table.length - 1; row++) {
+                                                const column = table[row].split(',')
+                                                label_hari.push(column[0]);
+                                                value_hari.push(parseInt(column[1]))
+                                            }
+                                            label_hari.push("");
+                                            value_hari.push(null);
+                                        }
+                                        //var temp = jQuery.extend(true, {}, config);
+                                        temp = jQuery.extend(true, [], config);
+                                        config.type = 'bar';
+                                        chart.config.data = data2;
+                                        //data.datasets.backgroundColor = '#0099ff';
+                                        chart.update();
+                                    }
+
+                                    async function ChartIt_Bulan() {
+                                        await getData_Bulan();
+                                        //data.labels = label_bulan;
+                                        //chart.update();
+                                    }
+
+                                    async function ChartIt_Hari() {
+                                        await getData_Hari();
+                                        //data.labels = label_hari;
+                                    }
+
+                                    function Clicked() {
+                                        if (document.getElementById("month").checked) {
+                                            document.getElementById("ChangeThis").innerHTML = "Bulan";
+                                            ChartIt_Bulan();
+                                        } else if (document.getElementById("day").checked) {
+                                            document.getElementById("ChangeThis").innerHTML = "Hari";
+                                            ChartIt_Hari();
+                                        }
+                                    }
+                                </script>
+                                <!--</div>-->
+                            </div>
+                        </div>
+                        <div class="col-lg-6 grid-margin stretch-card ">
+                            <div class="card ">
+                                <div class="card-body dashboard-tabs p-0 ">
+                                    <h3 class="title-dash font-weight-bold mb-2 ">Jumlah Berita Kecelakaan menurut Waktu</h3>
+                                    <canvas id="pie-chartcanvas"></canvas>
+                                    <!--
+                                    <div class="canvas-container ">
+                                    </div>
+                                    -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- partial:partials/_footer.html -->
+                <footer class="footer ">
+                    <div class="d-sm-flex justify-content-center ">
+                        <span class="text-muted d-block text-center d-sm-inline-block ">Copyright © 221709647 Made with <i class="mdi mdi-heart text-danger "></i> </span>
+                        <!--<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center "> Made with <i class="mdi mdi-heart text-danger "></i></span>-->
+                    </div>
+                </footer>
+            </div>
+            <!-- main-panel ends -->
+
+        </div>
+        <!-- page-body-wrapper ends -->
+
+    </div>
+    <!-- container-scroller -->
+
+
+    <!-- plugins:js -->
+    <script src="./vendors/base/vendor.bundle.base.js "></script>
+    <!-- endinject -->
+
+    <script src="./vendors/datatables.net/jquery.dataTables.js "></script>
+    <script src="./vendors/datatables.net-bs4/dataTables.bootstrap4.js "></script>
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="./js/off-canvas.js "></script>
+    <script src="./js/hoverable-collapse.js "></script>
+    <script src="./js/template.js "></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="./js/dashboard.js "></script>
+    <script src="./js/data-table.js "></script>
+    <script src="./js/jquery.dataTables.js "></script>
+    <script src="./js/dataTables.bootstrap4.js "></script>
+    <!-- End custom js for this page-->
+    <script src="./js/jquery.cookie.js " type="text/javascript "></script>
+    <script>
+        const label = new Array();
+        const value = new Array();
+
+        fetch('https://raw.githubusercontent.com/dwinissaa/skripsi/main/DATA/WAKTU.csv').then(response => response.text()).then(data => {
+            const table = data.split('\n').slice(1);
+            for (row = 0; row < table.length - 1; row++) {
+                const column = table[row].split(',')
+                label.push(column[0]);
+                value.push(parseInt(column[1]))
+            }
+            //console.log(value);
+            ChartIt()
+        })
+
+        async function ChartIt() {
+            const data = {
+                labels: label,
+                datasets: [{
+                    label: 'My First Dataset',
+                    data: value,
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(0, 204, 102)',
+                    ],
+                    hoverOffset: 4
+                }]
+            };
+            var ctx = $("#pie-chartcanvas");
+
+            var chart = new Chart(ctx, {
+                type: "doughnut",
+                data: data,
+            });
+        }
+    </script>
+
+</body>
